@@ -1,0 +1,768 @@
+package Model.APPS.CLOCK.v4_0_4;
+// Import statements
+import ifx.davex.app.manifest.*
+
+/*************** Revision History **********************************************
+ Version      Date          Description
+ 4.0.2        12-Sep-2025   - Initial version
+ 4.0.4        15-Sep-2025   - License and Copyright update
+ *******************************************************************************/
+
+class  CLOCK extends CLOCK_GUI
+{
+	/* Note  : Following APP properties are mandatory and important */
+
+	/* Begin : APP property section */
+
+	/**
+	 * APP version
+	 * Format: a string with three digit separated by a dot.
+	 */
+	def version			   = '4.0.4'
+
+	/**
+	 * APP categories declaration. 
+	 * It is list of strings. Subcategories are separated by slash.
+	 * No limits on number of categories and subcategories depth.
+	 */
+	def categoriesDescription = ["System"] 
+
+	/** 
+	 * Minimum DAVE version required for this APP.
+	 * 
+	 * It is string with three digit separated by a dot.
+	 */
+	def minDaveVersion           = '4.2.4'
+
+	/** 
+	 * Keywords used by search feature in APPs selection view
+	 * 
+	 * It is a list of string.
+	 */
+	def keywords	  = ["System Clock", "PLL", "CLOCK", "Clock", "ALL"]
+
+	/** 
+	 * softwareIDs is used to declare which devices are compatible with this APP.
+	 * It is a map with key a string containing a pattern that shall match the SW id of
+	 * the device and as value the minimal version of the APP.
+	 */
+
+	def softwareIDs       = [
+        "TC3.*.*.*":"1.0.0"]
+
+	/**
+	 * Singleton property:
+	 * When it is true the APP can be instantiated only once. 
+	 */
+	def singleton     = true
+
+
+	/**
+	 * initProvider property
+	 * It shall be true to add a call to <AppName>_Init() 
+	 */
+	def initProvider  = true
+
+	/**
+	 * Deprecated APP
+	 * Set it to true to indicate that the APP shall be not used for new projects.
+	 */
+	def deprecated    = false
+
+	/**
+	 * Sharable property.
+	 * It shall be true to allows multiple APPs to require the same instance of this APP.
+	 */
+	def sharable      = true
+
+	/**
+	 *  APP function description.
+	 */
+	def description = "APP to configure System and Peripheral Clocks."
+
+	/* End   : APP property section */
+
+	/* Begin : User APP property section */
+	/* Resource groups */
+	MVirtualResourceGroup hwres_clockctrl_osc				// Clock Ctrl OSC hardware resource
+	MVirtualResourceGroup hwres_clockctrl_syspll			// Clock Ctrl SysPLL hardware resource
+	MVirtualResourceGroup hwres_clockctrl_peripll			// Clock Ctrl PeriPLL hardware resource
+	MVirtualResourceGroup hwres_clockctrl_ccu				// Clock Ctrl CCU hardware resource
+	MVirtualResourceGroup hwres_clockctrl_clkmon			// Clock Ctrl Clock Monitor hardware resource
+	MVirtualResourceGroup hwres_clockctrl_extclk			// Clock Ctrl External Clock hardware resource
+
+	/* Virtual signals */
+	MVirtualSignal vs_syspll_sysclk							// SYSCLK input for SysPLL
+	MVirtualSignal vs_extclk_extclk0							// EXTCLK0 output
+	MVirtualSignal vs_extclk_extclk1							// EXTCLK1 output
+	
+	/* Device info */
+	GString gstring_swid = GString()
+	/* End   : User APP property section */
+
+	/* Begin : APP Constructor */
+	public CLOCK(DaveEnv daveEnv)
+	{
+		//==================================================================================================
+		// Hide non existing clocks based on selected device on the project
+		//==================================================================================================
+		gstring_swid.value = daveEnv.project.selectedDevice.deviceId.softwareId
+		String series = daveEnv.project.selectedDevice.deviceId.softwareId.split("\\.")[1]
+		String variant = daveEnv.project.selectedDevice.deviceId.softwareId.split("\\.")[3]
+		// fCPU1: TC3.3.*.STD does not have it
+		if (series == "3" && variant == "STD")
+		{
+			gcombo_cpu1div.visible = false
+			gfloat_fCPU1.visible = false
+		}
+		// fCPU2: TC3.3.*.* and TC3.6.*.* does not have it
+		if (series == "3" || series == "6")
+		{
+			gcombo_cpu2div.visible = false
+			gfloat_fCPU2.visible = false
+		}
+		// fCPU3: only TC3.8.*.* and TC3.9.*.* has it
+		if (series != "8" && series != "9")
+		{
+			gcombo_cpu3div.visible = false
+			gfloat_fCPU3.visible = false
+		}
+		// fCPU4/5 and fEBU: only TC3.9.*.* has them
+		if (series != "9")
+		{
+			gcombo_cpu4div.visible = false
+			gfloat_fCPU4.visible = false
+			gcombo_cpu5div.visible = false
+			gfloat_fCPU5.visible = false
+			gcombo_ebuperon.visible = false
+			gcombo_ebuperon.value = "Stop"
+		}
+		// fGTM: TC3.3.*.EXT and TC3.5.*.* does not have fGTM
+		if ((series == "3" && variant == "EXT") || series == "5")
+		{
+			gcombo_gtmdiv.visible = false
+			gcombo_gtmdiv.value = "Stop"
+		}
+		// fGETH: TC3.3.*.STD does not have it
+		if (series == "3" && variant == "STD")
+		{
+			gcombo_gethdiv.visible = false
+			gcombo_gethdiv.value = "Stop"
+		}
+		// fBBB: TC3.3.*.STD, TC3.6.*.*, TC3.7.*.STD and TC3.8.*.* does not have them
+		if ((series == "3" && variant == "STD") || series == "6" || (series == "7" && variant == "STD") || series == "8")
+		{
+			gcombo_bbbdiv.visible = false
+			gcombo_bbbdiv.value = "Stop"
+		}
+		// fADAS: TC3.3.*.STD, TC3.6.*.*, TC3.7.*.* and TC3.8.*.* does not have them
+		if ((series == "3" && variant == "STD") || series == "6" || series == "7" || series == "8")
+		{
+			gcombo_adasdiv.visible = false
+			gcombo_adasdiv.value = "Stop"
+		}
+		// fHSPDM: TC3.3.*.STD, TC3.6.*.*, TC3.7.*.* and TC3.8.*.* does not have it
+		if ((series == "3" && variant == "STD") || series == 6 || series == "7" || series == "8")
+		{
+			gcombo_hspdmperon.visible = false
+			gcombo_hspdmperon.value = "Stop"
+		}
+		// fI2C: TC3.3.*.* does not have it
+		if (series == "3")
+		{
+			gcombo_i2cdiv.visible = false
+			gcombo_i2cdiv.value = "Stop"
+		}
+		// fMSC/fHSCT: TC3.3.*.* and TC3.5.*.* does not have it
+		if (series == "3" || series == "5")
+		{
+			gcombo_mscdiv.visible = false
+			gcombo_mscdiv.value = "Stop"
+			gfloat_fHSCT.visible = false
+		}
+		// fERAY: TC3.3.*.EXT does not have it
+		if (series == "3" && variant == "EXT")
+		{
+			gcombo_erayperon.visible = false
+			gcombo_erayperon.value = "Stop"
+		}
+
+		//==================================================================================================
+		// Max frequency control
+		//==================================================================================================
+		int max_freq = daveEnv.project.selectedDevice.frequency
+		gfloat_fPLL0_300.visible = (max_freq == 300)
+		gfloat_fPLL0_200.visible = (max_freq == 200)
+		gfloat_fPLL0_160.visible = (max_freq == 160)
+		gcombo_fsidiv_300.visible = (max_freq == 300)
+		gcombo_fsidiv_u200.visible = (max_freq <= 200)
+		gcombo_stmdiv_300.visible = (max_freq == 300)
+		gcombo_stmdiv_u200.visible = (max_freq <= 200)
+		gcombo_mcanhdiv_300.visible = (max_freq == 300)
+		gcombo_mcanhdiv_u200.visible = (max_freq <= 200)
+		gcombo_spbdiv_300.visible = (max_freq == 300)
+		gcombo_spbdiv_u200.visible = (max_freq <= 200)
+		gfloat_fPLL1_300.visible = (max_freq == 300)
+		gfloat_fPLL1_200.visible = (max_freq == 200)
+		gfloat_fPLL1_160.visible = (max_freq == 160)
+		gcombo_peripll_k3div_300.visible = (max_freq == 300)
+		gcombo_peripll_k3div_u200.visible = (max_freq <= 200)
+		gcombo_pll1div_300.visible = (max_freq == 300)
+		gcombo_pll1div_u200.visible = (max_freq <= 200)
+		gcombo_syspll_divider_list_300.visible = (max_freq == 300)
+		gcombo_syspll_divider_list_200.visible = (max_freq == 200)
+		gcombo_syspll_divider_list_160.visible = (max_freq == 160)
+		gcombo_peripll_divider_list_300.visible = (max_freq == 300)
+		gcombo_peripll_divider_list_200.visible = (max_freq == 200)
+		gcombo_peripll_divider_list_160.visible = (max_freq == 160)
+
+		hwres_clockctrl_osc		= MVirtualResourceGroup("Oscillator Circuit", ["peripheral", "scu", "0", "clkctrl", "osc"])
+		hwres_clockctrl_syspll	= MVirtualResourceGroup("System PLL", ["peripheral", "scu", "0", "clkctrl", "syspll"])
+		hwres_clockctrl_peripll = MVirtualResourceGroup("Peripheral PLL", ["peripheral", "scu", "0", "clkctrl", "perpll"])
+		hwres_clockctrl_ccu		= MVirtualResourceGroup("Clock Control Unit", ["peripheral", "scu", "0", "clkctrl", "ccu"])
+		hwres_clockctrl_clkmon	= MVirtualResourceGroup("Clock Monitor", ["peripheral", "scu", "0", "clkctrl", "clkmon"])
+		hwres_clockctrl_extclk	= MVirtualResourceGroup("External Clock", ["peripheral", "scu", "0", "clkctrl", "extclk"])
+
+		// Change fOSC0 minimum value according to clock source
+		gfloat_fOSC0.minValue = MF({gcombo_clksrcmode.value == "External Input Clock" ? (float)4 : (float)16}, Float)
+
+		// Copy user input fOSC0 value to other widgets
+		gfloat_fOSC0_2.value = MF({gfloat_fOSC0.value}, Float)
+		gfloat_fOSC0_3.value = MF({gfloat_fOSC0.value}, Float)
+
+		// Switch visibility of XTAL2/SYSCLK
+		gimage_xtal2_mask.visible = MF({gcombo_clksrcmode.value == "External Input Clock"}, Boolean)
+		gimage_sysclk_mask.visible = MF({gcombo_pllinsel.value != "SYSCLK"}, Boolean)
+		MF is_sysclk_enabled = MF({gcombo_pllinsel.value == "SYSCLK"}, Boolean)
+		gfloat_SYSCLK.visible = is_sysclk_enabled
+		vs_syspll_sysclk = MVirtualSignal(hwres_clockctrl_syspll, "SYSCLK", "sysclk", is_sysclk_enabled, is_sysclk_enabled)
+
+		// Sync PeriPLL input source to SysPLL one
+		gcombo_pllinsel_2.value = MF({gcombo_pllinsel.value}, String)
+
+		// SysPLL Divider calculation
+		gcombo_syspll_divider_list_300.options = MF({
+			List options = []
+			if (gcombo_syspll_divider_list_300.visible)
+			{
+				float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+							 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+							 : gfloat_SYSCLK.value
+				for (int p = 1; p <= 8; p++) {
+					float dcoIn = pllsrc / (float)p
+					if (10 <= dcoIn && dcoIn <= 40) {
+						for (int n = 1; n <= 256; n++) {
+							float dcoOut = dcoIn * (float)n
+							if (400 <= dcoOut && dcoOut <= 800) {
+								for (int k2 = 1; k2 <= 8; k2++) {
+									if ((dcoOut / (float)k2) == gfloat_fPLL0_300.value) {
+										options.push("P:" + p + " N:" + n + " K2:" + k2)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				options.push("P:1 N:30 K2:2")
+			}
+			return (options)
+		}, List)
+		gcombo_syspll_divider_list_200.options = MF({
+			List options = []
+			if (gcombo_syspll_divider_list_200.visible)
+			{
+				float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+							 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+							 : gfloat_SYSCLK.value
+				for (int p = 1; p <= 8; p++) {
+					float dcoIn = pllsrc / (float)p
+					if (10 <= dcoIn && dcoIn <= 40) {
+						for (int n = 1; n <= 256; n++) {
+							float dcoOut = dcoIn * (float)n
+							if (400 <= dcoOut && dcoOut <= 800) {
+								for (int k2 = 1; k2 <= 8; k2++) {
+									if ((dcoOut / (float)k2) == gfloat_fPLL0_200.value) {
+										options.push("P:" + p + " N:" + n + " K2:" + k2)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				options.push("P:2 N:80 K2:4")
+			}
+			return (options)
+		}, List)
+		gcombo_syspll_divider_list_160.options = MF({
+			List options = []
+			if (gcombo_syspll_divider_list_160.visible)
+			{
+				float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+							 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+							 : gfloat_SYSCLK.value
+				for (int p = 1; p <= 8; p++) {
+					float dcoIn = pllsrc / (float)p
+					if (10 <= dcoIn && dcoIn <= 40) {
+						for (int n = 1; n <= 256; n++) {
+							float dcoOut = dcoIn * (float)n
+							if (400 <= dcoOut && dcoOut <= 800) {
+								for (int k2 = 1; k2 <= 8; k2++) {
+									if ((dcoOut / (float)k2) == gfloat_fPLL0_160.value) {
+										options.push("P:" + p + " N:" + n + " K2:" + k2)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				options.push("P:1 N:32 K2:4")
+			}
+			return (options)
+		}, List)
+		gfloat_syspll_fDCO.value = MF({
+			float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+						 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+						 : gfloat_SYSCLK.value
+			String value = (gcombo_syspll_divider_list_300.visible ? gcombo_syspll_divider_list_300.value
+						  : gcombo_syspll_divider_list_200.visible ? gcombo_syspll_divider_list_200.value
+						  : gcombo_syspll_divider_list_160.value)
+			pllsrc * Float.parseFloat(value.find(/N:\d+/).find(/\d+/)) / Float.parseFloat(value.find(/P:\d+/).find(/\d+/))
+		}, Float)
+
+		// PeriPLL Divider calculation
+		gcombo_peripll_divider_list_300.options = MF({
+			List options = []
+			if (gcombo_peripll_divider_list_300.visible)
+			{
+				float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+							 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+							 : gfloat_SYSCLK.value
+				for (int p = 1; p <= 8; p++) {
+					float dcoIn = pllsrc / (float)p
+					if (10 <= dcoIn && dcoIn <= 40) {
+						for (int n = 1; n <= 256; n++) {
+							float dcoOut = dcoIn * (float)n
+							if (400 <= dcoOut && dcoOut <= 800) {
+								for (int k2 = 1; k2 <= 8; k2++) {
+									if ((dcoOut / (float)k2) == gfloat_fPLL1_300.value) {
+										options.push("P:" + p + " N:" + n + " K2:" + k2)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				options.push("P:1 N:32 K2:2")
+			}
+			return (options)
+		}, List)
+		gcombo_peripll_divider_list_200.options = MF({
+			List options = []
+			if (gcombo_peripll_divider_list_200.visible)
+			{
+				float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+							 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+							 : gfloat_SYSCLK.value
+				for (int p = 1; p <= 8; p++) {
+					float dcoIn = pllsrc / (float)p
+					if (10 <= dcoIn && dcoIn <= 40) {
+						for (int n = 1; n <= 256; n++) {
+							float dcoOut = dcoIn * (float)n
+							if (400 <= dcoOut && dcoOut <= 800) {
+								for (int k2 = 1; k2 <= 8; k2++) {
+									if ((dcoOut / (float)k2) == gfloat_fPLL1_200.value) {
+										options.push("P:" + p + " N:" + n + " K2:" + k2)
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				options.push("P:2 N:80 K2:5")
+			}
+			return (options)
+		}, List)
+		gfloat_peripll_fDCO.value = MF({
+			float pllsrc = gcombo_pllinsel.value == "fBACK" ? gfloat_fBACK.value
+						 : gcombo_pllinsel.value == "fOSC0" ? gfloat_fOSC0.value
+						 : gfloat_SYSCLK.value
+			String value = (gcombo_peripll_divider_list_300.visible ? gcombo_peripll_divider_list_300.value
+						 : gcombo_peripll_divider_list_200.visible ? gcombo_peripll_divider_list_200.value
+						 : gcombo_peripll_divider_list_160.value)
+			pllsrc * Float.parseFloat(value.find(/N:\d+/).find(/\d+/)) / Float.parseFloat(value.find(/P:\d+/).find(/\d+/))
+		}, Float)
+
+		// Set fPLL2/fHSCT
+		gfloat_fPLL2.value = MF({
+			float k3div = Float.parseFloat(gcombo_peripll_k3div_300.visible ? gcombo_peripll_k3div_300.value : gcombo_peripll_k3div_u200.value)
+			gfloat_peripll_fDCO.value / k3div 
+		}, Float)
+		gfloat_fHSCT.minValue = MF({gfloat_fHSCT.visible ? (float)200 : (float)0}, Float)
+		gfloat_fHSCT.value = MF({!gfloat_fHSCT.visible ? (float)0 : (gfloat_peripll_fDCO.value / (float)2)}, Float)
+		gfloat_fHSCT_2.visible = MF({gfloat_fHSCT.visible}, Boolean)
+		gfloat_fHSCT_2.value = MF({gfloat_fHSCT.value}, Float)
+
+		// Set fsource0/2 by referring fsource1 selection
+		gcombo_clksel_0.value = MF({gcombo_clksel_1.value == "fBACK" ? "fBACK" : "fPLL0"}, String)
+		gcombo_clksel_2.value = MF({gcombo_clksel_1.value == "fBACK" ? "fBACK" : "fPLL2"}, String)
+
+		// Set fsource0/1/2 by referring fsource1 selection
+		gfloat_fsource0.value = MF({
+			gcombo_clksel_0.value == "fBACK" ? gfloat_fBACK.value
+										: gfloat_fPLL0_300.visible ? gfloat_fPLL0_300.value
+										: gfloat_fPLL0_200.visible ? gfloat_fPLL0_200.value
+										: gfloat_fPLL0_160.value
+		}, Float)
+		gcombo_pll1div_300.options = MF({gcombo_clksel_1.value == "fBACK" ? ["/1"] : ["/2", "/1"]}, List)
+		gcombo_pll1div_u200.options = MF({gcombo_pll1div_300.options}, List)
+		gfloat_fHSPDM_320.visible = MF({gcombo_hspdmperon.visible && gcombo_hspdmperon.value != "Stop"}, Boolean)
+		gfloat_fHSPDM_320.value = MF({
+			!gfloat_fHSPDM_320.visible ? (float)0
+				: gcombo_clksel_1.value == "fBACK" ? gfloat_fBACK.value
+				: gfloat_fPLL1_300.visible ? gfloat_fPLL1_300.value
+				: gfloat_fPLL1_200.visible ? gfloat_fPLL1_200.value
+				: gfloat_fPLL1_160.value
+		}, Float)
+		gfloat_fsource1.value = MF({
+			float fpll1 = gfloat_fPLL1_300.visible ? gfloat_fPLL1_300.value : gfloat_fPLL1_200.visible ? gfloat_fPLL1_200.value : gfloat_fPLL1_160.value
+			float pll1div = Float.parseFloat(gcombo_pll1div_300.visible ? gcombo_pll1div_300.value.find(/\d+/) : gcombo_pll1div_u200.value.find(/\d+/))
+			gcombo_clksel_1.value == "fBACK" ? gfloat_fBACK.value : (fpll1 / pll1div)
+		}, Float)
+		gfloat_fsource2.value = MF({gcombo_clksel_2.value == "fBACK" ? gfloat_fBACK.value : gfloat_fPLL2.value}, Float)
+
+		// Set fSRI and its belonging clocks
+		gfloat_fSRI.value = MF({gfloat_fsource0.value / Float.parseFloat(gcombo_sridiv.value.find(/\d+/))}, Float)
+		gfloat_fCPU0.value = MF({gfloat_fSRI.value * Float.parseFloat(gcombo_cpu0div.value.find(/\d+\//).find(/\d+/)) / (float)64}, Float)
+		gfloat_fCPU1.value = MF({gfloat_fSRI.value * Float.parseFloat(gcombo_cpu1div.value.find(/\d+\//).find(/\d+/)) / (float)64}, Float)
+		gfloat_fCPU2.value = MF({gfloat_fSRI.value * Float.parseFloat(gcombo_cpu2div.value.find(/\d+\//).find(/\d+/)) / (float)64}, Float)
+		gcombo_fsidiv_300.options = MF({(gcombo_sridiv.value == "/1" || gcombo_sridiv.value == "/2") ? ["/1", "/2", "/3"] : ["/1"]}, List)
+		gcombo_fsidiv_u200.options = MF({gcombo_fsidiv_300.options}, List)
+		gfloat_fFSI.value = MF({
+			gfloat_fSRI.value / Float.parseFloat(gcombo_fsidiv_300.visible ? gcombo_fsidiv_300.value.find(/\d+/) : gcombo_fsidiv_u200.value.find(/\d+/))
+		}, Float)
+		gfloat_fFSI2.value = MF({gfloat_fSRI.value / Float.parseFloat(gcombo_fsi2div.value.find(/\d+/))}, Float)
+
+		// Set fSRI and its belonging clocks
+		gfloat_fSPB.value = MF({
+			gfloat_fsource0.value / Float.parseFloat(gcombo_spbdiv_300.visible ? gcombo_spbdiv_300.value.find(/\d+/) : gcombo_spbdiv_u200.value.find(/\d+/))
+		}, Float)
+		gfloat_fRAM.value = MF({gfloat_fSPB.value * (float)2}, Float)
+		gfloat_fGTM.visible = MF({gcombo_gtmdiv.visible && gcombo_gtmdiv.value != "Stop"}, Boolean)
+		gfloat_fGTM.value = MF({
+			!gfloat_fGTM.visible ? (float)0
+				: gcombo_gtmdiv.value == "fSPB*2" ? gfloat_fRAM.value
+				: (gfloat_fsource0.value / Float.parseFloat(gcombo_gtmdiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+
+		// Set clocks provided from fsource0
+		gfloat_fREFCLK1.value = MF({gfloat_fsource0.value / (float)24}, Float)
+		gfloat_fBBB.visible = MF({gcombo_bbbdiv.visible && gcombo_bbbdiv.value != "Stop"}, Boolean)
+		gfloat_fBBB.value = MF({!gfloat_fBBB.visible ? (float)0 : (gfloat_fsource0.value / Float.parseFloat(gcombo_bbbdiv.value.find(/\d+/)))}, Float)
+		gfloat_fSTM.visible = MF({gcombo_stmdiv_300.visible ? gcombo_stmdiv_300.value != "Stop" : gcombo_stmdiv_u200.value != "Stop"}, Boolean)
+		gfloat_fSTM.value = MF({
+			!gfloat_fSTM.visible ? (float)0
+				: (gfloat_fsource0.value / Float.parseFloat(gcombo_stmdiv_300.visible ? gcombo_stmdiv_300.value.find(/\d+/)
+														  : gcombo_stmdiv_u200.value.find(/\d+/)))
+		}, Float)
+		gfloat_fGETH.visible = MF({gcombo_gethdiv.visible && gcombo_gethdiv.value != "Stop"}, Boolean)
+		gfloat_fGETH.minValue = MF({gfloat_fGETH.visible ? (float)100 : (float)0}, Float)
+		gfloat_fGETH.value = MF({!gfloat_fGETH.visible ? (float)0 : (gfloat_fsource0.value / Float.parseFloat(gcombo_gethdiv.value.find(/\d+/)))}, Float)
+		gfloat_fADAS.visible = MF({gcombo_adasdiv.visible && gcombo_adasdiv.value != "Stop"}, Boolean)
+		gfloat_fADAS.minValue = MF({gfloat_fADAS.visible ? (float)200 : (float)0}, Float)
+		gfloat_fADAS.value = MF({!gfloat_fADAS.visible ? (float)0 : (gfloat_fsource0.value / Float.parseFloat(gcombo_adasdiv.value.find(/\d+/)))}, Float)
+		gfloat_fMCANH.visible = MF({gcombo_mcanhdiv_300.visible ? gcombo_mcanhdiv_300.value != "Stop" : gcombo_mcanhdiv_u200.value != "Stop"}, Boolean)
+		gfloat_fMCANH.value = MF({
+			!gfloat_fMCANH.visible ? (float)0
+				: (gfloat_fsource0.value / Float.parseFloat(gcombo_mcanhdiv_300.visible ? gcombo_mcanhdiv_300.value.find(/\d+/)
+														  : gcombo_mcanhdiv_u200.value.find(/\d+/)))
+		}, Float)
+
+		// Set clocks provided from fsource1
+		gfloat_fREFCLK2.value = MF({gfloat_fsource1.value / (float)24}, Float)
+		gfloat_fERAY.visible = MF({gcombo_erayperon.visible && gcombo_erayperon.value != "Stop"}, Boolean)
+		gfloat_fERAY.minValue = MF({gfloat_fERAY.visible ? (float)80 : (float)0}, Float)
+		gfloat_fERAY.value = MF({!gfloat_fERAY.visible ? (float)0 : (gfloat_fsource1.value / Float.parseFloat(gcombo_erayperon.value.find(/\d+/)))}, Float)
+		gfloat_fMCAN.visible = MF({gcombo_mcandiv.value != "Stop"}, Boolean)
+		gfloat_fMCAN.value = MF({
+			!gfloat_fMCAN.visible ? (float)0
+				: gcombo_mcandiv.value == "fOSC0" ? gfloat_fOSC0.value
+				: (gfloat_fsource1.value / Float.parseFloat(gcombo_mcandiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+		gfloat_fASCLINS.visible = MF({gcombo_asclinsdiv.value != "Stop"}, Boolean)
+		gfloat_fASCLINS.value = MF({
+			!gfloat_fASCLINS.visible ? (float)0
+				: gcombo_asclinsdiv.value == "fOSC0" ? gfloat_fOSC0.value
+				: (gfloat_fsource1.value / Float.parseFloat(gcombo_asclinsdiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+		gfloat_fADC.value = MF({gfloat_fsource1.value}, Float)
+		gfloat_fEBU.visible = MF({gcombo_ebuperon.visible && gcombo_ebuperon.value != "Stop"}, Boolean)
+		gfloat_fEBU.value = MF({!gfloat_fEBU.visible ? (float)0 : gfloat_fsource1.value}, Float)
+		gcombo_hspdmperon_2.visible = MF({gcombo_hspdmperon.visible}, Boolean)
+		gcombo_hspdmperon_2.value = MF({gcombo_hspdmperon.value}, String)
+		gfloat_fHSPDM_160.visible = MF({gfloat_fHSPDM_320.visible}, Boolean)
+		gfloat_fHSPDM_160.value = MF({!gfloat_fHSPDM_160.visible ? (float)0 : gfloat_fsource1.value}, Float)
+
+		// Set clocks provided from fsource2
+		gfloat_fMSC.visible = MF({gcombo_mscdiv.visible && gcombo_mscdiv.value != "Stop"}, Boolean)
+		gfloat_fMSC.value = MF({
+			!gfloat_fMSC.visible ? (float)0
+				: gcombo_mscdiv.value.find(/fsource1/) ? (gfloat_fsource1.value / Float.parseFloat(gcombo_mscdiv.value.find(/\/\d+/).find(/\d+/)))
+				: (gfloat_fsource2.value / Float.parseFloat(gcombo_mscdiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+		gfloat_fQSPI.visible = MF({gcombo_qspidiv.value != "Stop"}, Boolean)
+		gfloat_fQSPI.value = MF({
+			!gfloat_fQSPI.visible ? (float)0
+				: gcombo_qspidiv.value.find(/fsource1/) ? (gfloat_fsource1.value / Float.parseFloat(gcombo_qspidiv.value.find(/\/\d+/).find(/\d+/)))
+				: (gfloat_fsource2.value / Float.parseFloat(gcombo_qspidiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+		gfloat_fASCLINF.visible = MF({gcombo_asclinfdiv.value != "Stop"}, Boolean)
+		gfloat_fASCLINF.value = MF({
+			!gfloat_fASCLINF.visible ? (float)0 : (gfloat_fsource2.value / Float.parseFloat(gcombo_asclinfdiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+		gfloat_fI2C.visible = MF({gcombo_i2cdiv.visible && gcombo_i2cdiv.value != "Stop"}, Boolean)
+		gfloat_fI2C.value = MF({
+			!gfloat_fI2C.visible ? (float)0 : (gfloat_fsource2.value / Float.parseFloat(gcombo_i2cdiv.value.find(/\/\d+/).find(/\d+/)))
+		}, Float)
+
+		// EXTCLK0
+		MF is_extclk0_enabled = MF({gcheck_extclk_en0.value}, Boolean)
+		MF is_extclk0_disabled = MF({!gcheck_extclk_en0.value}, Boolean)
+		MF is_extclk0_fout = MF({gcombo_extclk_sel0.value == "fOUT"}, Boolean)
+		MF isnot_extclk0_fout = MF({gcombo_extclk_sel0.value != "fOUT"}, Boolean)
+		gcombo_extclk_sel0.enabled = is_extclk0_enabled
+		gcombo_extclk_dm.visible = is_extclk0_fout
+		gcombo_extclk_dm.enabled = is_extclk0_enabled
+		gfloat_extclk_step.visible = is_extclk0_fout
+		gfloat_extclk_step.enabled = is_extclk0_enabled
+		gstring_extclk0_div2.visible = is_extclk0_fout
+		gimage_extclk0_mask.visible = isnot_extclk0_fout 
+		gfloat_extclk_step.maxValue = MF({gcombo_extclk_dm.value == "Normal" ? (float)1024 : (float)1023}, Float)
+		gfloat_extclk_step.minValue = MF({gcombo_extclk_dm.value == "Normal" ? (float)1 : (float)0}, Float)
+		gfloat_fEXTCLK0.visible = is_extclk0_enabled
+		gfloat_fEXTCLK0.value = MF({
+			switch(gcombo_extclk_sel0.value) {
+			case "fOUT":
+				return (gcombo_extclk_dm.value == "Normal" ? (gfloat_fSPB.value / (gfloat_extclk_step.value * 2))
+																: (gfloat_fSPB.value * gfloat_extclk_step.value / (1024 * 2)))
+			case "fPLL0":
+				return (gfloat_fPLL0_300.visible ? gfloat_fPLL0_300.value : gfloat_fPLL0_200.visible ? gfloat_fPLL0_200.value : gfloat_fPLL0_160.value)
+			case "fPLL1":
+				return (gfloat_fPLL1_300.visible ? gfloat_fPLL1_300.value : gfloat_fPLL1_200.visible ? gfloat_fPLL1_200.value : gfloat_fPLL1_160.value)
+			case "fOSC0":
+				return gfloat_fOSC0.value
+			case "fBACK":
+				return gfloat_fBACK.value
+			case "fPLL2":
+				return gfloat_fPLL2.value
+			case "fBBB":
+				return gfloat_fBBB.value
+			case "fSRI":
+				return gfloat_fSRI.value
+			case "fSPB":
+				return gfloat_fSPB.value
+			case "fFSI":
+				return gfloat_fFSI.value
+			case "fSTM":
+				return gfloat_fSTM.value
+			case "fGTM":
+				return gfloat_fGTM.value
+			case "fFSI2":
+				return gfloat_fFSI2.value
+			}
+			// fMT0
+			return 0
+		}, Float)
+		vs_extclk_extclk0 = MVirtualSignal(hwres_clockctrl_extclk, "EXTCLK0", "extclk0", is_extclk0_enabled, is_extclk0_enabled)
+
+		// EXTCLK1
+		MF is_extclk1_enabled = MF({gcheck_extclk_en1.value}, Boolean)
+		MF is_extclk1_disabled = MF({!gcheck_extclk_en1.value}, Boolean)
+		MF is_extclk1_fout = MF({gcombo_extclk_sel1.value == "fOUT"}, Boolean)
+		MF isnot_extclk1_fout = MF({gcombo_extclk_sel1.value != "fOUT"}, Boolean)
+		gcombo_extclk_sel1.enabled = is_extclk1_enabled
+		gfloat_extclk_div1.visible = is_extclk1_fout
+		gfloat_extclk_div1.enabled = is_extclk1_enabled
+		gstring_extclk1_div2.visible = is_extclk1_fout
+		gimage_extclk1_mask.visible = isnot_extclk1_fout 
+		gfloat_fEXTCLK1.visible = is_extclk1_enabled
+		gcombo_extclk1_nsel.enabled = is_extclk1_enabled
+		gfloat_fEXTCLK1.value = MF({
+			switch(gcombo_extclk_sel1.value) {
+			case "fOUT":
+				return (gfloat_fSPB.value / (gfloat_extclk_div1.value * 2))
+			case "fPLL0":
+				return (gfloat_fPLL0_300.visible ? gfloat_fPLL0_300.value : gfloat_fPLL0_200.visible ? gfloat_fPLL0_200.value : gfloat_fPLL0_160.value)
+			case "fPLL1":
+				return (gfloat_fPLL1_300.visible ? gfloat_fPLL1_300.value : gfloat_fPLL1_200.visible ? gfloat_fPLL1_200.value : gfloat_fPLL1_160.value)
+			case "fEBU":
+				return gfloat_fEBU.value
+			case "fBACK":
+				return gfloat_fBACK.value
+			case "fMCAN":
+				return gfloat_fMCAN.value
+			case "fADC":
+				return gfloat_fADC.value
+			case "fQSPI":
+				return gfloat_fQSPI.value
+			case "fSRI":
+				return gfloat_fSRI.value
+			case "fSPB":
+				return gfloat_fSPB.value
+			case "fI2C":
+				return gfloat_fI2C.value
+			case "fMSC":
+				return gfloat_fMSC.value
+			case "fERAY":
+				return gfloat_fERAY.value
+			case "fASCLINF":
+				return gfloat_fASCLINF.value
+			}
+			// fASCLINS
+			return (float)gfloat_fASCLINS.value
+		}, Float)
+		vs_extclk_extclk1 = MVirtualSignal(hwres_clockctrl_extclk, "EXTCLK1", "extclk1", is_extclk1_enabled, is_extclk1_enabled)
+
+		// consistency check
+		gmessage_message.text = MF({
+			String result = ""
+			if ((gfloat_fOSC0.value % 1) != 0){
+				result = "Error: The frequency of fOSC0 must be an integer value...\n"
+			}
+			if ((gfloat_SYSCLK.value % 1) != 0){
+				result += "Error: The frequency of SYSCLK must be an integer value...\n"
+			}
+			if ((gfloat_extclk_step.value % 1) != 0){
+				result += "Error: The N value of EXTCLK0 must be an integer value...\n"
+			}
+			if ((gfloat_extclk_div1.value % 1) != 0){
+				result += "Error: The N value of EXTCLK1 must be an integer value...\n"
+			}
+			if ((gfloat_fSRI.value < gfloat_fSPB.value) || ((gfloat_fSRI.value % gfloat_fSPB.value) != 0)){
+				result += "Error: The frequency of fSRI must be an integer multiple of fSPB...\n"
+			}
+			if ((gfloat_fFSI.value < (gfloat_fSPB.value / 2)) || ((gfloat_fFSI.value % (gfloat_fSPB.value / 2)) != 0)) {
+				result += "Error: The frequency of fFSI must be an integer multiple of fSPB/2...\n"
+			}
+			if (gfloat_fGTM.visible)
+			{
+				if (((gfloat_fGTM.value > gfloat_fSPB.value) && (gfloat_fGTM.value != (gfloat_fSPB.value * 2))) ||
+					((gfloat_fGTM.value < gfloat_fSPB.value) &&
+							(((gfloat_fSPB.value % gfloat_fGTM.value) != 0) || ((gfloat_fSPB.value / gfloat_fGTM.value) > 6)))) {
+					result += "Error: The frequencies of fGTM and fSPB must be the same, or fGTM must be twice fSPB, or fSPB must be n times fGTM (n=2-6)...\n"
+				}
+			}
+			if (gfloat_fSTM.visible)
+			{
+				if (((gfloat_fSPB.value > gfloat_fSTM.value) && (((gfloat_fSPB.value % gfloat_fSTM.value) != 0)
+																	|| ((gfloat_fSPB.value / gfloat_fSTM.value) > 6))) ||
+					((gfloat_fSPB.value < gfloat_fSTM.value) && (gfloat_fSTM.value % gfloat_fSPB.value) != 0)) {
+					result += ("Error: The frequencies of fSPB and fSTM must be the same,"
+										+ " or fSPB must be n times fSTM (n=2-6), or fSTM must be multiple of fSPB...\n")
+				}
+			}
+			if (gfloat_fBBB.visible)
+			{
+				if ((gfloat_fSRI.value < gfloat_fBBB.value) ||
+					((gfloat_fSRI.value > gfloat_fBBB.value)
+						&&
+					 (((gfloat_fSRI.value % gfloat_fBBB.value) != 0) || ((gfloat_fSRI.value / gfloat_fBBB.value) > 2)))) {
+					result += "Error: The frequencies of fSRI and fBBB must be the same, or fSRI must be twice fBBB...\n"
+				}
+			}
+			if (gfloat_fGETH.visible)
+			{
+				if ((gfloat_fSRI.value < gfloat_fGETH.value) || ((gfloat_fSRI.value % gfloat_fGETH.value) != 0)) {
+					result += "Error: The frequency of fSRI must be an integer multiple of fGETH...\n"
+				}
+			}
+			if (gfloat_fMCANH.visible && gfloat_fMCAN.visible)
+			{
+				if (gfloat_fMCANH.value < gfloat_fMCAN.value) {
+					result += "Error: The frequency of fMCANH must be faster than or equal to fMCAN...\n"
+				}
+			}
+			if (gfloat_fADAS.visible)
+			{
+				if ((gfloat_fADAS.value != gfloat_fSRI.value) && (gfloat_fADAS.value != (gfloat_fSRI.value * 2))) {
+					result += "Error: The frequencies of fADAS and fSRI must be the same, or fADAS must be twice fSRI...\n"
+				}
+				if (gfloat_fBBB.visible) {
+					if (gfloat_fADAS.value != (gfloat_fBBB.value * 2)) {
+						result += "Error: The frequency of ADAS must be twice fBBB...\n"
+					}
+				}
+			}
+			if (gfloat_fMCANH.visible)
+			{
+				if (gfloat_fSPB.value != gfloat_fMCANH.value) {
+					result += "Warning: The frequency of fSPB must be same with fMCANH in pretended networking / LP mode...\n"
+				}
+			}
+			if (gcombo_extclk_sel0.value == "fBBB" && !gfloat_fBBB.visible) {
+				result += "Warning: fBBB cannot be used as EXTCLK0 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel0.value == "fSTM" && !gfloat_fSTM.visible) {
+				result += "Warning: fSTM cannot be used as EXTCLK0 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel0.value == "fGTM" && !gfloat_fGTM.visible) {
+				result += "Warning: fGTM cannot be used as EXTCLK0 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel0.value == "fMT0") {
+				result += "Warning: fMT0 is selected as EXTCLK0 source. Make sure that the fMT0 is activated...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fEBU" && !gfloat_fEBU.visible) {
+				result += "Warning: fEBU cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fMCAN" && !gfloat_fMCAN.visible) {
+				result += "Warning: fMCAN cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fQSPI" && !gfloat_fQSPI.visible) {
+				result += "Warning: fQSPI cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fI2C" && !gfloat_fI2C.visible) {
+				result += "Warning: fI2C cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fMSC" && !gfloat_fMSC.visible) {
+				result += "Warning: fMSC cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fERAY" && !gfloat_fERAY.visible) {
+				result += "Warning: fERAY cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fASCLINF" && !gfloat_fASCLINF.visible) {
+				result += "Warning: fASCLINF cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			if (gcombo_extclk_sel1.value == "fASCLINS" && !gfloat_fASCLINS.visible) {
+				result += "Warning: fASCLINS cannot be used as EXTCLK1 in the current configuration...\n"
+			}
+			return result
+		}, String)
+		gmessage_message.isError = MF({gmessage_message.text.toString().contains("Error:")}, Boolean)
+		gmessage_message.visible = MF({(gmessage_message.text != "")}, Boolean)
+	}
+	/* End   : APP Constructor */
+
+	/* Begin : File Generation */
+	def generateFiles()
+	{
+		copy("clock.c", "clock.c")
+		copy("clock.h", "clock.h")
+		generate("clock_confc.tmpl", "clock_conf.c")
+		generate("clock_confh.tmpl", "clock_conf.h")
+	}
+	/* End   : File Generation */
+}

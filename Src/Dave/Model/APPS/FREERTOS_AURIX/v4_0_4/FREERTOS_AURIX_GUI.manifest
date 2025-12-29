@@ -1,0 +1,257 @@
+package Model.APPS.FREERTOS_AURIX.v4_0_4;
+// Import statements
+import ifx.davex.app.manifest.*
+
+abstract class FREERTOS_AURIX_GUI extends AppManifest {
+
+    /* IMPORTANT NOTE: This is an auto generated file, please do not edit manually. */
+    /* User modifications in the GUI editor will be updated here automatically.     */
+    /* Manually editing the contents of this file will corrupt the APP SDK project. */
+
+	/* Begin : UI variable section */
+	 public GTab gtab_1;
+	 public GTab gtab_2;
+	 public GTab gtab_3;
+	 public GTab gtab_4;
+	 public GInteger ginteger_configMAX_PRIORITIES;
+	 public GInteger ginteger_configMAX_API_CALL_INTERRUPT_PRIORITY;
+	 public GInteger ginteger_configMINIMAL_STACK_SIZE;
+	 public GInteger ginteger_configNUM_THREAD_LOCAL_STORAGE_POINTERS;
+	 public GInteger ginteger_configMAX_TASK_NAME_LEN;
+	 public GInteger ginteger_configTOTAL_HEAP_SIZE;
+	 public GInteger ginteger_configTIMER_TASK_PRIORITY;
+	 public GInteger ginteger_configTIMER_QUEUE_LENGTH;
+	 public GInteger ginteger_configMAX_CO_ROUTINE_PRIORITIES;
+	 public GInteger ginteger_configQUEUE_REGISTRY_SIZE;
+	 public GCombo gcombo_configUSE_PORT_OPTIMISED_TASK_SELECTION;
+	 public GCombo gcombo_configUSE_PREEMPTION;
+	 public GCombo gcombo_timer_source;
+	 public GCombo gcombo_configMEM_ALLOC;
+	 public GFloat gfloat_configTICK_RATE_HZ;
+	 public GCheck gcheck_configUSE_EVENT_GROUPS;
+	 public GCheck gcheck_configUSE_STREAM_BUFFERS;
+	 public GCheck gcheck_configENABLE_BACKWARD_COMPATIBILITY;
+	 public GCheck gcheck_configUSE_TIME_SLICING;
+	 public GCheck gcheck_configIDLE_SHOULD_YIELD;
+	 public GCheck gcheck_configUSE_TASK_NOTIFICATIONS;
+	 public GCheck gcheck_configUSE_MUTEXES;
+	 public GCheck gcheck_configUSE_RECURSIVE_MUTEXES;
+	 public GCheck gcheck_configUSE_COUNTING_SEMAPHORES;
+	 public GCheck gcheck_configUSE_QUEUE_SETS;
+	 public GCheck gcheck_configUSE_APPLICATION_TASK_TAG;
+	 public GCheck gcheck_configSUPPORT_DYNAMIC_ALLOCATION;
+	 public GCheck gcheck_configAPPLICATION_ALLOCATED_HEAP;
+	 public GCheck gcheck_configSUPPORT_STATIC_ALLOCATION;
+	 public GCheck gcheck_configUSE_TIMERS;
+	 public GCheck gcheck_configUSE_CO_ROUTINES;
+	 public GCheck gcheck_configUSE_IDLE_HOOK;
+	 public GCheck gcheck_configUSE_TICK_HOOK;
+	 public GCheck gcheck_configCHECK_FOR_STACK_OVERFLOW;
+	 public GCheck gcheck_configUSE_MALLOC_FAILED_HOOK;
+	 public GCheck gcheck_configGENERATE_RUN_TIME_STATS;
+	 public GCheck gcheck_configUSE_TRACE_FACILITY;
+	 public GCheck gcheck_configUSE_ASSERTIONS;
+	 public GCheck gcheck_INCLUDE_vTaskPrioritySet;
+	 public GCheck gcheck_INCLUDE_uxTaskPriorityGet;
+	 public GCheck gcheck_INCLUDE_vTaskDelete;
+	 public GCheck gcheck_INCLUDE_vTaskSuspend;
+	 public GCheck gcheck_INCLUDE_vTaskDelayUntil;
+	 public GCheck gcheck_INCLUDE_vTaskDelay;
+	 public GCheck gcheck_INCLUDE_xTaskGetSchedulerState;
+	 public GCheck gcheck_INCLUDE_xTaskGetCurrentTaskHandle;
+	 public GCheck gcheck_INCLUDE_uxTaskGetStackHighWaterMark;
+	 public GCheck gcheck_INCLUDE_uxTaskGetStackHighWaterMark2;
+	 public GCheck gcheck_INCLUDE_xTaskGetIdleTaskHandle;
+	 public GCheck gcheck_INCLUDE_eTaskGetState;
+	 public GCheck gcheck_INCLUDE_xTimerPendFunctionCall;
+	 public GCheck gcheck_INCLUDE_xTaskAbortDelay;
+	 public GCheck gcheck_INCLUDE_xTaskGetHandle;
+	 public GCheck gcheck_INCLUDE_xTaskResumeFromISR;
+	 public GLabel glabel_configTICK_RATE_HZ;
+	 public GLabel glabel_configUSE_PORT_OPTIMISED_TASK_SELECTION;
+	 public GLabel glabel_configMAX_PRIORITIES;
+	 public GLabel glabel_configMAX_API_CALL_INTERRUPT_PRIORITY;
+	 public GLabel glabel_configMINIMAL_STACK_SIZE;
+	 public GLabel glabel_configNUM_THREAD_LOCAL_STORAGE_POINTERS;
+	 public GLabel glabel_configMAX_TASK_NAME_LEN;
+	 public GLabel glabel_configUSE_EVENT_GROUPS;
+	 public GLabel glabel_configUSE_STREAM_BUFFERS;
+	 public GLabel glabel_configENABLE_BACKWARD_COMPATIBILITY;
+	 public GLabel glabel_configUSE_PREEMPTION;
+	 public GLabel glabel_configUSE_TIME_SLICING;
+	 public GLabel glabel_configIDLE_SHOULD_YIELD;
+	 public GLabel glabel_configUSE_TASK_NOTIFICATIONS;
+	 public GLabel glabel_configUSE_MUTEXES;
+	 public GLabel glabel_configUSE_RECURSIVE_MUTEXES;
+	 public GLabel glabel_configUSE_COUNTING_SEMAPHORES;
+	 public GLabel glabel_configUSE_QUEUE_SETS;
+	 public GLabel glabel_configUSE_APPLICATION_TASK_TAG;
+	 public GLabel glabel_timer_source;
+	 public GLabel glabel_configSUPPORT_DYNAMIC_ALLOCATION;
+	 public GLabel glabel_configMEM_ALLOC;
+	 public GLabel glabel_configTOTAL_HEAP_SIZE;
+	 public GLabel glabel_configAPPLICATION_ALLOCATED_HEAP;
+	 public GLabel glabel_configSUPPORT_STATIC_ALLOCATION;
+	 public GLabel glabel_configUSE_TIMERS;
+	 public GLabel glabel_configTIMER_TASK_PRIORITY;
+	 public GLabel glabel_configTIMER_QUEUE_LENGTH;
+	 public GLabel glabel_configUSE_CO_ROUTINES;
+	 public GLabel glabel_configMAX_CO_ROUTINE_PRIORITIES;
+	 public GLabel glabel_configUSE_IDLE_HOOK;
+	 public GLabel glabel_configUSE_TICK_HOOK;
+	 public GLabel glabel_configCHECK_FOR_STACK_OVERFLOW;
+	 public GLabel glabel_configUSE_MALLOC_FAILED_HOOK;
+	 public GLabel glabel_configGENERATE_RUN_TIME_STATS;
+	 public GLabel glabel_configUSE_TRACE_FACILITY;
+	 public GLabel glabel_configUSE_ASSERTIONS;
+	 public GLabel glabel_configQUEUE_REGISTRY_SIZE;
+	 public GLabel glabel_INCLUDE_vTaskPrioritySet;
+	 public GLabel glabel_INCLUDE_uxTaskPriorityGet;
+	 public GLabel glabel_INCLUDE_vTaskDelete;
+	 public GLabel glabel_INCLUDE_vTaskSuspend;
+	 public GLabel glabel_INCLUDE_vTaskDelayUntil;
+	 public GLabel glabel_INCLUDE_vTaskDelay;
+	 public GLabel glabel_INCLUDE_xTaskGetSchedulerState;
+	 public GLabel glabel_INCLUDE_xTaskGetCurrentTaskHandle;
+	 public GLabel glabel_INCLUDE_uxTaskGetStackHighWaterMark;
+	 public GLabel glabel_INCLUDE_uxTaskGetStackHighWaterMark2;
+	 public GLabel glabel_INCLUDE_xTaskGetIdleTaskHandle;
+	 public GLabel glabel_INCLUDE_eTaskGetState;
+	 public GLabel glabel_INCLUDE_xTimerPendFunctionCall;
+	 public GLabel glabel_INCLUDE_xTaskAbortDelay;
+	 public GLabel glabel_INCLUDE_xTaskGetHandle;
+	 public GLabel glabel_INCLUDE_xTaskResumeFromISR;
+	 public GGroup ggroup_6;
+	 public GGroup ggroup_1;
+	 public GGroup ggroup_2;
+	 public GGroup ggroup_3;
+	 public GGroup ggroup_4;
+	 public GGroup ggroup_5;
+	 public GMessage gmessage_memory_allocation;
+
+	 public FREERTOS_AURIX_GUI(DaveEnv daveEnv){
+
+	 gtab_1 = GTab(widgetName: "gtab_1", text: "Kernel Settings", enabled: true, visible: true)
+	 gtab_2 = GTab(widgetName: "gtab_2", text: "Miscellaneous Settings", enabled: true, visible: true)
+	 gtab_3 = GTab(widgetName: "gtab_3", text: "Trace Settings", enabled: true, visible: true)
+	 gtab_4 = GTab(widgetName: "gtab_4", text: "API Inclusion Settings", enabled: true, visible: true)
+	 ginteger_configMAX_PRIORITIES = GInteger(widgetName: "ginteger_configMAX_PRIORITIES", value: 10, minValue: 1, maxValue: Long.MAX_VALUE, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configMAX_API_CALL_INTERRUPT_PRIORITY = GInteger(widgetName: "ginteger_configMAX_API_CALL_INTERRUPT_PRIORITY", value: 31, minValue: 0, maxValue: 255, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configMINIMAL_STACK_SIZE = GInteger(widgetName: "ginteger_configMINIMAL_STACK_SIZE", value: 256, minValue: 1, maxValue: 1024, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configNUM_THREAD_LOCAL_STORAGE_POINTERS = GInteger(widgetName: "ginteger_configNUM_THREAD_LOCAL_STORAGE_POINTERS", value: 5, minValue: 0, maxValue: 32, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configMAX_TASK_NAME_LEN = GInteger(widgetName: "ginteger_configMAX_TASK_NAME_LEN", value: 16, minValue: 1, maxValue: 64, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configTOTAL_HEAP_SIZE = GInteger(widgetName: "ginteger_configTOTAL_HEAP_SIZE", value: 8192, minValue: 1, maxValue: 65526, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configTIMER_TASK_PRIORITY = GInteger(widgetName: "ginteger_configTIMER_TASK_PRIORITY", value: 9, minValue: 0, maxValue: Long.MAX_VALUE, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configTIMER_QUEUE_LENGTH = GInteger(widgetName: "ginteger_configTIMER_QUEUE_LENGTH", value: 5, minValue: 1, maxValue: Long.MAX_VALUE, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configMAX_CO_ROUTINE_PRIORITIES = GInteger(widgetName: "ginteger_configMAX_CO_ROUTINE_PRIORITIES", value: 2, minValue: 1, maxValue: Long.MAX_VALUE, enabled: true, visible: true, isMandatoryValue: false)
+	 ginteger_configQUEUE_REGISTRY_SIZE = GInteger(widgetName: "ginteger_configQUEUE_REGISTRY_SIZE", value: 8, minValue: 0, maxValue: 64, enabled: true, visible: true, isMandatoryValue: false)
+	 gcombo_configUSE_PORT_OPTIMISED_TASK_SELECTION = GCombo(widgetName: "gcombo_configUSE_PORT_OPTIMISED_TASK_SELECTION", options: ["Port Optimized","Generic"], value: "Port Optimized", enabled: true, visible: true, isMandatoryValue: false)
+	 gcombo_configUSE_PREEMPTION = GCombo(widgetName: "gcombo_configUSE_PREEMPTION", options: ["Premptive","Cooperative"], value: "Premptive", enabled: true, visible: true, isMandatoryValue: false)
+	 gcombo_timer_source = GCombo(widgetName: "gcombo_timer_source", options: ["Internal (STM)","APP (TIMER_STM/CMP0)","APP (TIMER_STM/CMP1)","APP (TIMER_GTM)"], value: "Internal (STM)", enabled: true, visible: true, isMandatoryValue: false)
+	 gcombo_configMEM_ALLOC = GCombo(widgetName: "gcombo_configMEM_ALLOC", options: ["heap_1","heap_2","heap_3","heap_4","heap_5"], value: "heap_1", enabled: true, visible: true, isMandatoryValue: false)
+	 gfloat_configTICK_RATE_HZ = GFloat(widgetName: "gfloat_configTICK_RATE_HZ", value: 1000, minValue: 100, maxValue: 10000, enabled: true, visible: true, isMandatoryValue: false)
+	 gcheck_configUSE_EVENT_GROUPS = GCheck(widgetName: "gcheck_configUSE_EVENT_GROUPS", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_STREAM_BUFFERS = GCheck(widgetName: "gcheck_configUSE_STREAM_BUFFERS", value: true, enabled: true, visible: true)
+	 gcheck_configENABLE_BACKWARD_COMPATIBILITY = GCheck(widgetName: "gcheck_configENABLE_BACKWARD_COMPATIBILITY", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_TIME_SLICING = GCheck(widgetName: "gcheck_configUSE_TIME_SLICING", value: true, enabled: true, visible: true)
+	 gcheck_configIDLE_SHOULD_YIELD = GCheck(widgetName: "gcheck_configIDLE_SHOULD_YIELD", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_TASK_NOTIFICATIONS = GCheck(widgetName: "gcheck_configUSE_TASK_NOTIFICATIONS", value: true, enabled: false, visible: true)
+	 gcheck_configUSE_MUTEXES = GCheck(widgetName: "gcheck_configUSE_MUTEXES", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_RECURSIVE_MUTEXES = GCheck(widgetName: "gcheck_configUSE_RECURSIVE_MUTEXES", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_COUNTING_SEMAPHORES = GCheck(widgetName: "gcheck_configUSE_COUNTING_SEMAPHORES", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_QUEUE_SETS = GCheck(widgetName: "gcheck_configUSE_QUEUE_SETS", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_APPLICATION_TASK_TAG = GCheck(widgetName: "gcheck_configUSE_APPLICATION_TASK_TAG", value: true, enabled: true, visible: true)
+	 gcheck_configSUPPORT_DYNAMIC_ALLOCATION = GCheck(widgetName: "gcheck_configSUPPORT_DYNAMIC_ALLOCATION", value: true, enabled: true, visible: true)
+	 gcheck_configAPPLICATION_ALLOCATED_HEAP = GCheck(widgetName: "gcheck_configAPPLICATION_ALLOCATED_HEAP", value: false, enabled: true, visible: true)
+	 gcheck_configSUPPORT_STATIC_ALLOCATION = GCheck(widgetName: "gcheck_configSUPPORT_STATIC_ALLOCATION", value: false, enabled: true, visible: true)
+	 gcheck_configUSE_TIMERS = GCheck(widgetName: "gcheck_configUSE_TIMERS", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_CO_ROUTINES = GCheck(widgetName: "gcheck_configUSE_CO_ROUTINES", value: false, enabled: true, visible: true)
+	 gcheck_configUSE_IDLE_HOOK = GCheck(widgetName: "gcheck_configUSE_IDLE_HOOK", value: false, enabled: true, visible: true)
+	 gcheck_configUSE_TICK_HOOK = GCheck(widgetName: "gcheck_configUSE_TICK_HOOK", value: false, enabled: true, visible: true)
+	 gcheck_configCHECK_FOR_STACK_OVERFLOW = GCheck(widgetName: "gcheck_configCHECK_FOR_STACK_OVERFLOW", value: false, enabled: true, visible: true)
+	 gcheck_configUSE_MALLOC_FAILED_HOOK = GCheck(widgetName: "gcheck_configUSE_MALLOC_FAILED_HOOK", value: false, enabled: true, visible: true)
+	 gcheck_configGENERATE_RUN_TIME_STATS = GCheck(widgetName: "gcheck_configGENERATE_RUN_TIME_STATS", value: false, enabled: false, visible: true)
+	 gcheck_configUSE_TRACE_FACILITY = GCheck(widgetName: "gcheck_configUSE_TRACE_FACILITY", value: true, enabled: true, visible: true)
+	 gcheck_configUSE_ASSERTIONS = GCheck(widgetName: "gcheck_configUSE_ASSERTIONS", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_vTaskPrioritySet = GCheck(widgetName: "gcheck_INCLUDE_vTaskPrioritySet", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_uxTaskPriorityGet = GCheck(widgetName: "gcheck_INCLUDE_uxTaskPriorityGet", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_vTaskDelete = GCheck(widgetName: "gcheck_INCLUDE_vTaskDelete", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_vTaskSuspend = GCheck(widgetName: "gcheck_INCLUDE_vTaskSuspend", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_vTaskDelayUntil = GCheck(widgetName: "gcheck_INCLUDE_vTaskDelayUntil", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_vTaskDelay = GCheck(widgetName: "gcheck_INCLUDE_vTaskDelay", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskGetSchedulerState = GCheck(widgetName: "gcheck_INCLUDE_xTaskGetSchedulerState", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskGetCurrentTaskHandle = GCheck(widgetName: "gcheck_INCLUDE_xTaskGetCurrentTaskHandle", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_uxTaskGetStackHighWaterMark = GCheck(widgetName: "gcheck_INCLUDE_uxTaskGetStackHighWaterMark", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_uxTaskGetStackHighWaterMark2 = GCheck(widgetName: "gcheck_INCLUDE_uxTaskGetStackHighWaterMark2", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskGetIdleTaskHandle = GCheck(widgetName: "gcheck_INCLUDE_xTaskGetIdleTaskHandle", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_eTaskGetState = GCheck(widgetName: "gcheck_INCLUDE_eTaskGetState", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTimerPendFunctionCall = GCheck(widgetName: "gcheck_INCLUDE_xTimerPendFunctionCall", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskAbortDelay = GCheck(widgetName: "gcheck_INCLUDE_xTaskAbortDelay", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskGetHandle = GCheck(widgetName: "gcheck_INCLUDE_xTaskGetHandle", value: true, enabled: true, visible: true)
+	 gcheck_INCLUDE_xTaskResumeFromISR = GCheck(widgetName: "gcheck_INCLUDE_xTaskResumeFromISR", value: true, enabled: true, visible: true)
+	 glabel_configTICK_RATE_HZ = GLabel(widgetName: "glabel_configTICK_RATE_HZ", text: "Scheduler tick rate [Hz]", enabled: true, visible: true)
+	 glabel_configUSE_PORT_OPTIMISED_TASK_SELECTION = GLabel(widgetName: "glabel_configUSE_PORT_OPTIMISED_TASK_SELECTION", text: "Task Selection Method", enabled: true, visible: true)
+	 glabel_configMAX_PRIORITIES = GLabel(widgetName: "glabel_configMAX_PRIORITIES", text: "Number of Task Priorities", enabled: true, visible: true)
+	 glabel_configMAX_API_CALL_INTERRUPT_PRIORITY = GLabel(widgetName: "glabel_configMAX_API_CALL_INTERRUPT_PRIORITY", text: "Maximum API Call Interrupt Priority", enabled: true, visible: true)
+	 glabel_configMINIMAL_STACK_SIZE = GLabel(widgetName: "glabel_configMINIMAL_STACK_SIZE", text: "Idle Task Stack Size [words]", enabled: true, visible: true)
+	 glabel_configNUM_THREAD_LOCAL_STORAGE_POINTERS = GLabel(widgetName: "glabel_configNUM_THREAD_LOCAL_STORAGE_POINTERS", text: "Number of Thread Local Storage (TLS) Pointers", enabled: true, visible: true)
+	 glabel_configMAX_TASK_NAME_LEN = GLabel(widgetName: "glabel_configMAX_TASK_NAME_LEN", text: "Task Name Length", enabled: true, visible: true)
+	 glabel_configUSE_EVENT_GROUPS = GLabel(widgetName: "glabel_configUSE_EVENT_GROUPS", text: "Use Event Groups", enabled: true, visible: true)
+	 glabel_configUSE_STREAM_BUFFERS = GLabel(widgetName: "glabel_configUSE_STREAM_BUFFERS", text: "Use Stream Buffers", enabled: true, visible: true)
+	 glabel_configENABLE_BACKWARD_COMPATIBILITY = GLabel(widgetName: "glabel_configENABLE_BACKWARD_COMPATIBILITY", text: "Enable Backward Compatibility", enabled: true, visible: true)
+	 glabel_configUSE_PREEMPTION = GLabel(widgetName: "glabel_configUSE_PREEMPTION", text: "Scheduler Mode", enabled: true, visible: true)
+	 glabel_configUSE_TIME_SLICING = GLabel(widgetName: "glabel_configUSE_TIME_SLICING", text: "Use Time Slicing", enabled: true, visible: true)
+	 glabel_configIDLE_SHOULD_YIELD = GLabel(widgetName: "glabel_configIDLE_SHOULD_YIELD", text: "Idle Task should Yield", enabled: true, visible: true)
+	 glabel_configUSE_TASK_NOTIFICATIONS = GLabel(widgetName: "glabel_configUSE_TASK_NOTIFICATIONS", text: "Use Task Notifications", enabled: true, visible: true)
+	 glabel_configUSE_MUTEXES = GLabel(widgetName: "glabel_configUSE_MUTEXES", text: "Use Mutexes", enabled: true, visible: true)
+	 glabel_configUSE_RECURSIVE_MUTEXES = GLabel(widgetName: "glabel_configUSE_RECURSIVE_MUTEXES", text: "Use Recursive Mutexes", enabled: true, visible: true)
+	 glabel_configUSE_COUNTING_SEMAPHORES = GLabel(widgetName: "glabel_configUSE_COUNTING_SEMAPHORES", text: "Use Counting Semaphores", enabled: true, visible: true)
+	 glabel_configUSE_QUEUE_SETS = GLabel(widgetName: "glabel_configUSE_QUEUE_SETS", text: "Use Queue Sets", enabled: true, visible: true)
+	 glabel_configUSE_APPLICATION_TASK_TAG = GLabel(widgetName: "glabel_configUSE_APPLICATION_TASK_TAG", text: "Use Application Task Tag", enabled: true, visible: true)
+	 glabel_timer_source = GLabel(widgetName: "glabel_timer_source", text: "Timer Source", enabled: true, visible: true)
+	 glabel_configSUPPORT_DYNAMIC_ALLOCATION = GLabel(widgetName: "glabel_configSUPPORT_DYNAMIC_ALLOCATION", text: "Enable dynamic memory allocation", enabled: true, visible: true)
+	 glabel_configMEM_ALLOC = GLabel(widgetName: "glabel_configMEM_ALLOC", text: "Memory Allocation Mode", enabled: true, visible: true)
+	 glabel_configTOTAL_HEAP_SIZE = GLabel(widgetName: "glabel_configTOTAL_HEAP_SIZE", text: "Heap Size [bytes]", enabled: true, visible: true)
+	 glabel_configAPPLICATION_ALLOCATED_HEAP = GLabel(widgetName: "glabel_configAPPLICATION_ALLOCATED_HEAP", text: "Enable Application Heap Allocation", enabled: true, visible: true)
+	 glabel_configSUPPORT_STATIC_ALLOCATION = GLabel(widgetName: "glabel_configSUPPORT_STATIC_ALLOCATION", text: "Enable Static Memory Allocation", enabled: true, visible: true)
+	 glabel_configUSE_TIMERS = GLabel(widgetName: "glabel_configUSE_TIMERS", text: "Use timers", enabled: true, visible: true)
+	 glabel_configTIMER_TASK_PRIORITY = GLabel(widgetName: "glabel_configTIMER_TASK_PRIORITY", text: "Timer Task Priority", enabled: true, visible: true)
+	 glabel_configTIMER_QUEUE_LENGTH = GLabel(widgetName: "glabel_configTIMER_QUEUE_LENGTH", text: "Timer Queue Length", enabled: true, visible: true)
+	 glabel_configUSE_CO_ROUTINES = GLabel(widgetName: "glabel_configUSE_CO_ROUTINES", text: "Use co-Routines", enabled: true, visible: true)
+	 glabel_configMAX_CO_ROUTINE_PRIORITIES = GLabel(widgetName: "glabel_configMAX_CO_ROUTINE_PRIORITIES", text: "Number of co-Routine Priorites", enabled: true, visible: true)
+	 glabel_configUSE_IDLE_HOOK = GLabel(widgetName: "glabel_configUSE_IDLE_HOOK", text: "Use Idle Hook", enabled: true, visible: true)
+	 glabel_configUSE_TICK_HOOK = GLabel(widgetName: "glabel_configUSE_TICK_HOOK", text: "Use Tick Hook", enabled: true, visible: true)
+	 glabel_configCHECK_FOR_STACK_OVERFLOW = GLabel(widgetName: "glabel_configCHECK_FOR_STACK_OVERFLOW", text: "Stack Overflow Hook", enabled: true, visible: true)
+	 glabel_configUSE_MALLOC_FAILED_HOOK = GLabel(widgetName: "glabel_configUSE_MALLOC_FAILED_HOOK", text: "Use malloc Failed Hook", enabled: true, visible: true)
+	 glabel_configGENERATE_RUN_TIME_STATS = GLabel(widgetName: "glabel_configGENERATE_RUN_TIME_STATS", text: "Generate Run Time Statistics", enabled: true, visible: true)
+	 glabel_configUSE_TRACE_FACILITY = GLabel(widgetName: "glabel_configUSE_TRACE_FACILITY", text: "Use Trace Facility", enabled: true, visible: true)
+	 glabel_configUSE_ASSERTIONS = GLabel(widgetName: "glabel_configUSE_ASSERTIONS", text: "Enable Assertions", enabled: true, visible: true)
+	 glabel_configQUEUE_REGISTRY_SIZE = GLabel(widgetName: "glabel_configQUEUE_REGISTRY_SIZE", text: "Queue registry size:", enabled: true, visible: true)
+	 glabel_INCLUDE_vTaskPrioritySet = GLabel(widgetName: "glabel_INCLUDE_vTaskPrioritySet", text: "vTaskPrioritySet()", enabled: true, visible: true)
+	 glabel_INCLUDE_uxTaskPriorityGet = GLabel(widgetName: "glabel_INCLUDE_uxTaskPriorityGet", text: "uxTaskPriorityGet()", enabled: true, visible: true)
+	 glabel_INCLUDE_vTaskDelete = GLabel(widgetName: "glabel_INCLUDE_vTaskDelete", text: "vTaskDelete()", enabled: true, visible: true)
+	 glabel_INCLUDE_vTaskSuspend = GLabel(widgetName: "glabel_INCLUDE_vTaskSuspend", text: "vTaskSuspend()", enabled: true, visible: true)
+	 glabel_INCLUDE_vTaskDelayUntil = GLabel(widgetName: "glabel_INCLUDE_vTaskDelayUntil", text: "vTaskDelayUntil()", enabled: true, visible: true)
+	 glabel_INCLUDE_vTaskDelay = GLabel(widgetName: "glabel_INCLUDE_vTaskDelay", text: "vTaskDelay()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskGetSchedulerState = GLabel(widgetName: "glabel_INCLUDE_xTaskGetSchedulerState", text: "xTaskGetSchedulerState()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskGetCurrentTaskHandle = GLabel(widgetName: "glabel_INCLUDE_xTaskGetCurrentTaskHandle", text: "xTaskGetCurrentTaskHandle()", enabled: true, visible: true)
+	 glabel_INCLUDE_uxTaskGetStackHighWaterMark = GLabel(widgetName: "glabel_INCLUDE_uxTaskGetStackHighWaterMark", text: "uxTaskGetStackHighWaterMark()", enabled: true, visible: true)
+	 glabel_INCLUDE_uxTaskGetStackHighWaterMark2 = GLabel(widgetName: "glabel_INCLUDE_uxTaskGetStackHighWaterMark2", text: "uxTaskGetStackHighWaterMark2()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskGetIdleTaskHandle = GLabel(widgetName: "glabel_INCLUDE_xTaskGetIdleTaskHandle", text: "xTaskGetIdleTaskHandle()", enabled: true, visible: true)
+	 glabel_INCLUDE_eTaskGetState = GLabel(widgetName: "glabel_INCLUDE_eTaskGetState", text: "eTaskGetState()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTimerPendFunctionCall = GLabel(widgetName: "glabel_INCLUDE_xTimerPendFunctionCall", text: "xTimerPendFunctionCall()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskAbortDelay = GLabel(widgetName: "glabel_INCLUDE_xTaskAbortDelay", text: "xTaskAbortDelay()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskGetHandle = GLabel(widgetName: "glabel_INCLUDE_xTaskGetHandle", text: "xTaskGetHandle()", enabled: true, visible: true)
+	 glabel_INCLUDE_xTaskResumeFromISR = GLabel(widgetName: "glabel_INCLUDE_xTaskResumeFromISR", text: "xTaskResumeFromISR()", enabled: true, visible: true)
+	 ggroup_6 = GGroup(widgetName: "ggroup_6", text: "Scheduling Algorithm", enabled: true, visible: true)
+	 ggroup_1 = GGroup(widgetName: "ggroup_1", text: "Task Synchronization Primitives", enabled: true, visible: true)
+	 ggroup_2 = GGroup(widgetName: "ggroup_2", text: "Memory Managment Settings", enabled: true, visible: true)
+	 ggroup_3 = GGroup(widgetName: "ggroup_3", text: "Timer Settings", enabled: true, visible: true)
+	 ggroup_4 = GGroup(widgetName: "ggroup_4", text: "Co-routine Settings", enabled: true, visible: true)
+	 ggroup_5 = GGroup(widgetName: "ggroup_5", text: "Hook Settings", enabled: true, visible: true)
+	 gmessage_memory_allocation = GMessage(widgetName: "gmessage_memory_allocation", text: "Dynamic memory allocation and Static memory allocation can not be both disabled.", isError: true, visible: true)
+
+
+	 }
+	/* End : UI variable section */
+}
